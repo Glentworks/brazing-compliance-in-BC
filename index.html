@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSBC Brazing Program — BRC-7035</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f9;color:#1a1a2e;font-size:15px;line-height:1.6}
+a{color:#185FA5;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Header */
+.header{background:#0c2340;color:#fff;padding:0}
+.header-top{display:flex;align-items:center;gap:16px;padding:18px 32px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.logo-box{display:flex;align-items:center;gap:10px}
+.logo-icon{width:42px;height:42px;background:#2176bc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff}
+.logo-text{font-size:15px;font-weight:600;color:#fff;line-height:1.3}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.6);font-weight:400}
+.header-nav{display:flex;gap:0;padding:0 32px}
+.nav-tab{padding:12px 20px;font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.nav-tab.active{color:#fff;border-bottom-color:#378ADD}
+
+/* Hero */
+.hero{background:#0f3460;color:#fff;padding:32px 32px 28px}
+.hero-doc{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px}
+.hero h1{font-size:24px;font-weight:600;margin-bottom:8px}
+.hero p{font-size:14px;color:rgba(255,255,255,0.75);max-width:640px;line-height:1.6}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hero-badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8)}
+
+/* Main layout */
+.main{max-width:1100px;margin:0 auto;padding:28px 24px}
+
+/* Section pages */
+.page{display:none}
+.page.active{display:block}
+
+/* Section header */
+.section-head{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 14px}
+
+/* Cards */
+.card{background:#fff;border:1px solid #e0e4ea;border-radius:10px;padding:20px 24px;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:600;color:#1a1a2e;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-sub{font-size:13px;color:#666;line-height:1.55}
+.card-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.icon-blue{background:#E6F1FB;color:#185FA5}
+.icon-green{background:#EAF3DE;color:#3B6D11}
+.icon-amber{background:#FAEEDA;color:#854F0B}
+.icon-red{background:#FCEBEB;color:#A32D2D}
+.icon-purple{background:#EEEDFE;color:#534AB7}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+
+/* Compliance checklist */
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;background:#fff;border:1px solid #e0e4ea;border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
+.check-item:hover{background:#f8fafc}
+.check-item.done{border-left:3px solid #3B6D11;background:#f8fdf4}
+.check-item.done .check-box{background:#3B6D11;border-color:#3B6D11}
+.check-item.done .check-box::after{content:'✓';color:#fff;font-size:12px}
+.check-box{width:22px;height:22px;border:1.5px solid #ccc;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px}
+.check-label{font-size:14px;color:#1a1a2e;font-weight:500}
+.check-desc{font-size:12px;color:#666;margin-top:2px}
+.check-code{font-size:11px;color:#185FA5;margin-top:3px;font-family:monospace}
+
+/* Progress bar */
+.progress-wrap{background:#fff;border:1px solid #e0e4ea;border-radius:10px;padding:16px 20px;margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:8px}
+.progress-bar{height:8px;background:#e8ecf0;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:#3B6D11;border-radius:4px;transition:width 0.3s}
+
+/* Variables table */
+.var-table{width:100%;border-collapse:collapse;font-size:13px}
+.var-table th{background:#f4f6f9;padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:#555;border-bottom:1px solid #e0e4ea}
+.var-table td{padding:10px 14px;border-bottom:1px solid #f0f2f5;vertical-align:top}
+.var-table tr:last-child td{border-bottom:none}
+.var-table tr:hover td{background:#f8fafc}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.tag-essential{background:#FCEBEB;color:#A32D2D}
+.tag-nonessential{background:#EAF3DE;color:#3B6D11}
+
+/* Steps */
+.step{display:flex;gap:16px;margin-bottom:16px}
+.step-num{width:30px;height:30px;border-radius:50%;background:#0f3460;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{}
+.step-title{font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:3px}
+.step-desc{font-size:13px;color:#555;line-height:1.55}
+.step-code{font-size:11px;color:#185FA5;margin-top:4px;font-family:monospace}
+
+/* Alert */
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px;line-height:1.55;border-left:4px solid}
+.alert-warn{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.alert-danger{background:#FCEBEB;color:#791F1F;border-color:#E24B4A}
+.alert-info{background:#E6F1FB;color:#0C447C;border-color:#378ADD}
+.alert-success{background:#EAF3DE;color:#27500A;border-color:#639922}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid #e0e4ea;border-radius:8px;padding:14px 16px;text-align:center}
+.stat-val{font-size:22px;font-weight:600;color:#0f3460}
+.stat-label{font-size:11px;color:#888;margin-top:3px}
+
+/* Accordion */
+.acc-item{border:1px solid #e0e4ea;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.acc-head{padding:14px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff}
+.acc-head:hover{background:#f8fafc}
+.acc-body{padding:0 18px;max-height:0;overflow:hidden;transition:max-height 0.25s,padding 0.2s;font-size:13px;color:#444;line-height:1.65}
+.acc-body.open{max-height:600px;padding:14px 18px}
+.acc-arrow{transition:transform 0.2s;color:#888;font-size:12px}
+.acc-arrow.open{transform:rotate(180deg)}
+
+/* Footer */
+.site-footer{background:#0c2340;color:rgba(255,255,255,0.6);text-align:center;padding:18px;font-size:12px;margin-top:40px}
+.site-footer a{color:rgba(255,255,255,0.8)}
+
+button.plain{background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo-box">
+      <div class="logo-icon">TS</div>
+      <div>
+        <div class="logo-text">Technical Safety BC</div>
+        <div class="logo-sub">Boilers, Pressure Vessels &amp; Refrigeration</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-nav">
+    <button class="nav-tab active plain" onclick="showPage('overview')">Overview</button>
+    <button class="nav-tab plain" onclick="showPage('compliance')">Compliance checklist</button>
+    <button class="nav-tab plain" onclick="showPage('bps')">BPS requirements</button>
+    <button class="nav-tab plain" onclick="showPage('variables')">Brazing variables</button>
+    <button class="nav-tab plain" onclick="showPage('qualification')">Brazer qualification</button>
+    <button class="nav-tab plain" onclick="showPage('registration')">Procedure registration</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-doc">Controlled document · BRC-7035 · May 14, 2026</div>
+  <h1>Brazing Program Implementation Guide</h1>
+  <p>Guidance for licensed contractors integrating brazing programs into their Quality Control Program (QCP) under BC's Safety Standards Act. Applies to refrigeration, pressure piping, and pressure vessel work.</p>
+  <div class="hero-badges">
+    <span class="hero-badge">ASME Section IX</span>
+    <span class="hero-badge">ASME B31.5</span>
+    <span class="hero-badge">CSA B51</span>
+    <span class="hero-badge">CSA B52</span>
+    <span class="hero-badge">BC Safety Regulation s.78</span>
+    <span class="hero-badge">Safety Standards Act SBC 2003 c.39</span>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- OVERVIEW PAGE -->
+<div class="page active" id="page-overview">
+  <div class="alert alert-warn">⚠ This guideline does not supersede the requirements of the Power Engineers, Boiler, Pressure Vessel and Refrigeration Safety Regulation or any adopted codes and standards. Always verify current versions at technicalsafetybc.ca.</div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="stat-val">s.78</div><div class="stat-label">BC Regulation — procedure registration</div></div>
+    <div class="stat"><div class="stat-val">s.5(4)</div><div class="stat-label">BC Regulation — brazer qualification</div></div>
+    <div class="stat"><div class="stat-val">6 mo</div><div class="stat-label">Max gap — brazer continuity (QB-320)</div></div>
+    <div class="stat"><div class="stat-val">QB-484</div><div class="stat-label">ASME form for BPQ records</div></div>
+  </div>
+
+  <p class="section-head">What is brazing?</p>
+  <div class="card">
+    <div class="card-title"><div class="card-icon icon-blue">🔥</div>Definition — CSA B51 &amp; ASME Section IX</div>
+    <div class="card-sub" style="margin-top:8px;font-style:italic;border-left:3px solid #378ADD;padding-left:12px;color:#333">
+      "A group of metal-joining processes that produce a coalescence of materials by heating them to a suitable temperature and by using a filler metal having a liquidus above 450 °C (840 °F) and below the solidus of the base materials. The filler metal is distributed between the closely fitted surfaces of the joint by capillary action."
+    </div>
+    <div class="card-sub" style="margin-top:12px">When performed on regulated equipment (refrigeration systems, pressure piping, pressure vessels), brazing constitutes <strong>regulated work</strong> under the Safety Standards Act, SBC 2003, c.39.</div>
+  </div>
+
+  <p class="section-head">Applicable regulations &amp; codes</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-blue">📋</div>BC Safety Regulation</div>
+      <div class="card-sub">Power Engineers, Boiler, Pressure Vessel, and Refrigeration Safety Regulation. Establishes procedure registration (s.78) and brazer qualification (s.5(4)) in accordance with CSA B51.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-purple">🇨🇦</div>CSA B51</div>
+      <div class="card-sub">General and administrative requirements for procedure registration and testing. Incorporates ASME Section IX (s.6.2.2.3) and ASME B31.3/B31.5 (s.5.3.1) by reference.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-amber">⚙️</div>ASME Section IX</div>
+      <div class="card-sub">Detailed technical requirements for brazing procedures, procedure qualifications, and performance tests. Primary technical reference for BPS development and brazer qualification.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-green">❄️</div>ASME B31.5 / CSA B52</div>
+      <div class="card-sub">Further technical and administrative requirements for brazing procedure qualification and performance qualification for refrigeration piping and heat transfer components.</div>
+    </div>
+  </div>
+
+  <p class="section-head">QCP must address</p>
+  <div class="grid-3">
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">BPS development &amp; qualification</div>
+      <div style="font-size:12px;color:#666">Written procedure, test coupon, destructive/NDE testing</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Procedure registration</div>
+      <div style="font-size:12px;color:#666">Register with TSBC before use on regulated equipment</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Brazer performance qualification</div>
+      <div style="font-size:12px;color:#666">Testing, BPQ records, continuity tracking</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Essential variables &amp; portability</div>
+      <div style="font-size:12px;color:#666">Track changes requiring requalification</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">BPS control &amp; distribution</div>
+      <div style="font-size:12px;color:#666">Controlled copies available to brazers on site</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">TSBC audit readiness</div>
+      <div style="font-size:12px;color:#666">QCPs subject to inspection at any time</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLIANCE CHECKLIST PAGE -->
+<div class="page" id="page-compliance">
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Compliance progress</span>
+      <span id="prog-text">0 of 16 items complete</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="alert alert-info">Click each item to mark it complete. Use this as a self-assessment tool — TSBC may inspect your QCP and regulated work at any time under s.5 of the Safety Standards Act.</div>
+
+  <p class="section-head">A — Contractor licence &amp; QCP foundation</p>
+  <div id="checks-a"></div>
+
+  <p class="section-head">B — Brazing procedure specification (BPS)</p>
+  <div id="checks-b"></div>
+
+  <p class="section-head">C — Brazer performance qualification</p>
+  <div id="checks-c"></div>
+
+  <p class="section-head">D — Procedure registration with TSBC</p>
+  <div id="checks-d"></div>
+
+  <p class="section-head">E — Continuity &amp; records</p>
+  <div id="checks-e"></div>
+</div>
+
+<!-- BPS PAGE -->
+<div class="page" id="page-bps">
+  <div class="alert alert-info">A Brazing Procedure Specification (BPS) is a written document defining how a brazed joint will be produced. It must conform to ASME Section IX and be registered with TSBC before use on regulated equipment.</div>
+
+  <p class="section-head">Minimum BPS contents (ASME Sec. IX)</p>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+      <div style="padding:8px 12px;background:#f4f6f9;border-radius:6px">✔ Procedure name/number &amp; revision</div>
+      <div style="padding:8px 12px;background:#f4f6f9;border-radius:6px">✔ Organization (procedure developer) name</div>
+      <div style="padding:8px 12px;background:#f4f6f9;border-radius:6px">✔ Brazing process type</div>
+      <div style="padding:8px 12px;background:#f4f6f9;border-radius:6px">✔ All essential &amp; non-essential variables</div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;color:#555">Suggested form: <strong>ASME Section IX Form QB-482</strong></div>
+  </div>
+
+  <p class="section-head">Accepted brazing processes</p>
+  <div class="grid-3">
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Torch brazing</div><div style="font-size:12px;color:#666;margin-top:3px">Most common for refrigeration Cu piping</div></div>
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Furnace brazing</div><div style="font-size:12px;color:#666;margin-top:3px">Controlled atmosphere</div></div>
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Induction brazing</div><div style="font-size:12px;color:#666;margin-top:3px">High-frequency heating</div></div>
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Resistance brazing</div><div style="font-size:12px;color:#666;margin-top:3px">Electrical resistance heating</div></div>
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Drip brazing</div><div style="font-size:12px;color:#666;margin-top:3px">Salt or flux bath</div></div>
+    <div class="card" style="padding:12px 14px;text-align:center"><div style="font-size:13px;font-weight:600">Dip brazing</div><div style="font-size:12px;color:#666;margin-top:3px">Molten metal bath</div></div>
+  </div>
+
+  <p class="section-head">Qualification testing methods (QB-202)</p>
+  <div class="card">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Tension test</div><div class="step-desc">Determines ultimate strength of brazed butt, scarf, lap, and rabbet joints.</div><div class="step-code">QB-150 series</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Guided bend test</div><div class="step-desc">Determines soundness and ductility of butt and scarf joints.</div><div class="step-code">QB-160 series</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Peel test</div><div class="step-desc">Determines bond quality and quantity of defects in lap joints.</div><div class="step-code">QB-170 series</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Sectioning test</div><div class="step-desc">Determines soundness of workmanship coupons. Substitutes for peel test when impractical.</div><div class="step-code">QB-180 series</div></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">Visual examination</div><div class="step-desc">Inspects external surface for filler metal continuity, size, contour, and wetting of fillet.</div><div class="step-code">QB-190 series</div></div></div>
+  </div>
+
+  <div class="alert alert-success">Brazing performed for procedure qualification may also satisfy performance qualification for the brazer if all requirements of ASME Sec. IX Article XIII are met.</div>
+
+  <p class="section-head">Key ASME forms</p>
+  <div class="grid-2">
+    <div class="card" style="padding:14px 16px"><strong>QB-482</strong> — Brazing Procedure Specification (BPS) form<br><span style="font-size:12px;color:#666">Suggested template for developing your BPS</span></div>
+    <div class="card" style="padding:14px 16px"><strong>QB-483</strong> — Procedure Qualification Record (PQR) form<br><span style="font-size:12px;color:#666">Records test results of procedure qualification</span></div>
+  </div>
+</div>
+
+<!-- VARIABLES PAGE -->
+<div class="page" id="page-variables">
+  <div class="alert alert-danger">A change to any essential variable requires requalification AND re-registration of the BPS with Technical Safety BC before use on regulated equipment.</div>
+
+  <p class="section-head">Essential variables — require requalification &amp; re-registration</p>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="var-table">
+      <thead><tr><th>Variable</th><th>ASME Sec. IX reference</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Base metal</strong></td><td>QB-402</td><td><span class="tag tag-essential">Essential</span></td><td>Change in P-number or metal group requires new BPS qualification</td></tr>
+        <tr><td><strong>Brazing filler metal</strong></td><td>QB-403</td><td><span class="tag tag-essential">Essential</span></td><td>Change in F-number (e.g. BCuP to BAg) requires requalification</td></tr>
+        <tr><td><strong>Brazing temperature</strong></td><td>QB-404</td><td><span class="tag tag-essential">Essential</span></td><td>Significant change in temperature range requires requalification</td></tr>
+        <tr><td><strong>Brazing flux, gas, or atmosphere</strong></td><td>QB-406</td><td><span class="tag tag-essential">Essential</span></td><td>Includes change from flux to no-flux (e.g. BCuP self-fluxing vs. fluxed BAg)</td></tr>
+        <tr><td><strong>Flow position</strong></td><td>QB-407</td><td><span class="tag tag-essential">Essential</span></td><td>Change in brazing position (1G/2G/5G/6G) is an essential variable</td></tr>
+        <tr><td><strong>Joint design</strong></td><td>QB-408</td><td><span class="tag tag-essential">Essential</span></td><td>Change in joint type (e.g. socket to butt) requires requalification</td></tr>
+        <tr><td><strong>Post-braze heat treatment</strong></td><td>QB-409</td><td><span class="tag tag-essential">Essential</span></td><td>Addition, deletion, or change in PBHT requires requalification</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="section-head" style="margin-top:20px">Non-essential variables — no requalification needed</p>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="var-table">
+      <thead><tr><th>Variable</th><th>ASME Sec. IX reference</th><th>Type</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Technique</strong></td><td>QB-410</td><td><span class="tag tag-nonessential">Non-essential</span></td><td>Base metal prep method, post-braze cleaning, flame character, tip size, manual vs. semi-auto torch</td></tr>
+        <tr><td><strong>Brazing time</strong></td><td>QB-411</td><td><span class="tag tag-nonessential">Non-essential</span></td><td>Duration of heating at brazing temperature</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:16px">Full variable tables by brazing process are found in ASME Section IX at <strong>QB-252 through QB-257</strong>. A brazer qualified to a BPS may braze under any other BPS with the same essential variables.</div>
+</div>
+
+<!-- QUALIFICATION PAGE -->
+<div class="page" id="page-qualification">
+  <div class="alert alert-warn">Only a qualified individual working under an appropriate class of contractor licence may perform brazing of regulated pressure equipment — even though anyone can obtain a brazer performance qualification per ASME Section IX.</div>
+
+  <p class="section-head">Qualification process</p>
+  <div class="card">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Braze a test coupon</div><div class="step-desc">In strict accordance with the developed or adopted BPS. Testing may be conducted by a licensed contractor or at a Recognized Test Administrator (RTA) facility.</div><div class="step-code">ASME Sec. IX Article XIII · QB-302</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Destructive or NDE testing</div><div class="step-desc">Test coupon evaluated to determine joint integrity. Results documented on BPQ form.</div><div class="step-code">QB-302 — testing requirements</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Complete BPQ record</div><div class="step-desc">Document brazer name, employer, BPS used, date, test results. Retain and make available to TSBC safety officer on inspection.</div><div class="step-code">ASME Form QB-484</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Maintain continuity</div><div class="step-desc">Brazer must use each qualified process at least once every 6 months. Field work, repair, alteration, or shop brazing for continuity maintenance all qualify as evidence.</div><div class="step-code">QB-320 continuity · QB-322 requalification</div></div></div>
+  </div>
+
+  <p class="section-head">Portability of qualifications — transferring to a new employer</p>
+  <div class="card">
+    <div style="font-size:13px;color:#444;line-height:1.65">A brazer's performance qualification may be accepted by a new employer/contractor provided all four conditions are met:</div>
+    <div style="margin-top:12px;display:grid;gap:8px">
+      <div style="padding:10px 14px;background:#f4f6f9;border-radius:7px;font-size:13px"><strong>1.</strong> New employer obtains a copy of the BPQ (Form QB-484) showing the brazer's name, qualifying employer, and date.</div>
+      <div style="padding:10px 14px;background:#f4f6f9;border-radius:7px;font-size:13px"><strong>2.</strong> New employer obtains continuity records showing each relevant BPS was used at no more than 6-month intervals from qualification to transfer date.</div>
+      <div style="padding:10px 14px;background:#f4f6f9;border-radius:7px;font-size:13px"><strong>3.</strong> New employer verifies essential variables on brazer's existing BPQ are within the limits of the new employer's BPS.</div>
+      <div style="padding:10px 14px;background:#f4f6f9;border-radius:7px;font-size:13px"><strong>4.</strong> New employer formally accepts the brazer's performance qualification record within their QCP.</div>
+    </div>
+  </div>
+
+  <p class="section-head">QCP testing section must detail</p>
+  <div class="grid-2">
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Processes used for testing</div>
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Material controls</div>
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Test methods</div>
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Qualification of individual(s) administering tests</div>
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Documentation controls</div>
+    <div class="card" style="padding:12px 16px;font-size:13px">✔ Record keeping procedures</div>
+  </div>
+</div>
+
+<!-- REGISTRATION PAGE -->
+<div class="page" id="page-registration">
+  <div class="alert alert-danger">A BPS must be registered with Technical Safety BC under s.78 of the Power Engineers, Boiler, Pressure Vessel and Refrigeration Safety Regulation BEFORE use on any regulated pressure equipment.</div>
+
+  <p class="section-head">Registration options</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-blue">🏢</div>Individual contractor registration</div>
+      <div class="card-sub">A licensed contractor develops, qualifies, and registers their own BPS directly with TSBC. Contractor is the procedure owner and responsible party.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon icon-purple">🤝</div>Group / association registration</div>
+      <div class="card-sub">A larger representative group (industry association, educational institution, cooperative) registers BPS for use by members. Contractors must formally adopt the procedure per requirements below.</div>
+    </div>
+  </div>
+
+  <p class="section-head">Adopting a registered BPS from another organization</p>
+  <div class="card">
+    <div style="font-size:13px;color:#444;margin-bottom:12px">All four conditions must be met before adopting a group-registered BPS:</div>
+    <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">ASME compliance verified</div><div class="step-desc">The BPS fully meets applicable requirements of ASME Section IX.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">TSBC registration confirmed</div><div class="step-desc">The BPS is registered with Technical Safety BC (confirm Admin # from registrant).</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Compatibility verified</div><div class="step-desc">Adopting contractor verifies procedure is compatible with the brazing work they intend to perform and meets applicable codes of construction (B31.5, CSA B52, etc.).</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">QCP documentation updated</div><div class="step-desc">Contractor's QCP addresses the adoption and includes a copy or reference to the registered BPS and associated documents.</div></div></div>
+  </div>
+
+  <p class="section-head">Required adoption agreement contents</p>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="var-table">
+      <thead><tr><th>Item</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Name &amp; address — original developer</td><td>Full legal name and address of the BPS developer/registrant</td></tr>
+        <tr><td>Name &amp; address — adopting contractor</td><td>Full legal name and address of contractor adopting the BPS</td></tr>
+        <tr><td>BPS identification number</td><td>Unique BPS number as registered</td></tr>
+        <tr><td>TSBC Admin # </td><td>Technical Safety BC registration/Admin number</td></tr>
+        <tr><td>Date of agreement</td><td>Date the adoption agreement is executed</td></tr>
+        <tr><td>Expiry date</td><td>Where applicable — if the registration has a defined term</td></tr>
+        <tr><td>Signatures</td><td>Signatures from both parties (developer and adopting contractor)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:16px">Contractors may also adopt BPS' registered in other Canadian jurisdictions, provided those procedures are accepted through <strong>reciprocal registration</strong> with Technical Safety BC.</div>
+
+  <p class="section-head">Frequently asked questions</p>
+  <div id="faq-list"></div>
+</div>
+
+</div>
+
+<div class="site-footer">
+  Technical Safety BC · BRC-7035 · May 14, 2026 · <a href="https://www.technicalsafetybc.ca" target="_blank">technicalsafetybc.ca</a> · Toll free: 1 866 566 7233<br>
+  <span style="font-size:11px;opacity:0.7">This tool is for guidance only and does not supersede applicable legislation, codes, or standards.</span>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = ['overview','compliance','bps','variables','qualification','registration'];
+  tabs[map.indexOf(id)].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+const checks = {
+  a: [
+    { label: 'Contractor licence is current', desc: 'Hold an appropriate class of TSBC contractor licence for the regulated work scope.', code: 'Safety Standards Act s.5' },
+    { label: 'QCP manual is in place', desc: 'Quality Control Program manual exists, is controlled, and addresses brazing activities.', code: 'TSBC QCP guidelines' },
+    { label: 'Brazing defined as regulated work in QCP', desc: 'QCP recognises that brazing on pressure equipment constitutes regulated work under the Safety Standards Act.', code: 'SBC 2003 c.39' },
+    { label: 'QCP audit-ready', desc: 'All QCP records available for TSBC inspection, investigation, monitoring, or audit at any time.', code: 'Safety Standards Act s.5' }
+  ],
+  b: [
+    { label: 'BPS developed per ASME Section IX', desc: 'BPS includes procedure number, organization name, brazing process, and all essential/non-essential variables.', code: 'ASME Sec. IX · QB-482' },
+    { label: 'BPS qualification testing completed', desc: 'Test coupon brazed and destructively/NDE tested. PQR (QB-483) completed and on file.', code: 'QB-202 · QB-483' },
+    { label: 'BPS controlled and distributed', desc: 'QCP describes how BPS copies are controlled and made available to brazers on site during work.', code: 'TSBC BRC-7035 s.4' },
+    { label: 'BPS compatible with production work', desc: 'Procedure reviewed and confirmed compatible with actual brazing processes, materials, and codes of construction.', code: 'ASME B31.5 · CSA B52' }
+  ],
+  c: [
+    { label: 'All brazers hold current BPQ', desc: 'Each brazer has a completed BPQ record (QB-484) on file showing qualification date and employer.', code: 'ASME Sec. IX QB-484' },
+    { label: 'Brazer qualification within essential variable limits', desc: 'Brazer qualification covers base metal, filler metal F-number, position, and process used in production.', code: 'QB-401 series' },
+    { label: 'Continuity records maintained', desc: 'Each brazer has evidence of using each qualified process within the last 6 months.', code: 'QB-320 · QB-322' },
+    { label: 'Testing administered by qualified personnel', desc: 'QCP identifies who administers testing and documents their competency or declaration.', code: 'TSBC BRC-7035 A.4' }
+  ],
+  d: [
+    { label: 'BPS registered with TSBC before use', desc: 'TSBC Admin # obtained and on file. Registration confirmed before commencing work on regulated equipment.', code: 'BC Regulation s.78' },
+    { label: 'Adoption agreement in place (if using group BPS)', desc: 'Written agreement with original registrant on file, including BPS ID, TSBC Admin #, signatures, and dates.', code: 'TSBC BRC-7035 A.3' }
+  ],
+  e: [
+    { label: 'BPQ records retained and accessible', desc: 'Brazer performance qualification records available to TSBC safety officer during any inspection.', code: 'QB-484 · TSBC BRC-7035 A.4' },
+    { label: 'Continuity tracking system in QCP', desc: 'QCP describes how brazer continuity is monitored and when requalification will be triggered.', code: 'QB-320 · QB-322' }
+  ]
+};
+
+let checkState = {};
+
+function buildChecks() {
+  Object.keys(checks).forEach(section => {
+    const container = document.getElementById('checks-' + section);
+    checks[section].forEach((item, i) => {
+      const key = section + '-' + i;
+      checkState[key] = false;
+      const div = document.createElement('div');
+      div.className = 'check-item';
+      div.id = 'ci-' + key;
+      div.innerHTML = `<div class="check-box" id="cb-${key}"></div><div><div class="check-label">${item.label}</div><div class="check-desc">${item.desc}</div><div class="check-code">${item.code}</div></div>`;
+      div.onclick = () => toggleCheck(key);
+      container.appendChild(div);
+    });
+  });
+  updateProgress();
+}
+
+function toggleCheck(key) {
+  checkState[key] = !checkState[key];
+  const item = document.getElementById('ci-' + key);
+  item.classList.toggle('done', checkState[key]);
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = Object.keys(checkState).length;
+  const done = Object.values(checkState).filter(Boolean).length;
+  document.getElementById('prog-text').textContent = done + ' of ' + total + ' items complete';
+  document.getElementById('prog-fill').style.width = Math.round((done/total)*100) + '%';
+}
+
+const faqs = [
+  { q: 'Can I use a BPS registered in another province?', a: 'Yes. Contractors may adopt BPS developed and registered in other Canadian jurisdictions provided those procedures are accepted through reciprocal registration with Technical Safety BC.' },
+  { q: 'Does a brazer need to requalify when changing employers?', a: 'Not necessarily. The new employer may accept existing BPQ records if they obtain the original BPQ (QB-484), continuity records showing no gaps > 6 months, verify essential variables are compatible, and formally accept the qualification in their QCP.' },
+  { q: 'What happens if a brazer goes inactive for more than 6 months?', a: 'Continuity ceases and the performance qualification expires. The brazer must retest and requalify per ASME Section IX Paragraph QB-322 before resuming work on regulated equipment.' },
+  { q: 'Does this guideline apply to new boiler or pressure vessel construction?', a: 'No. This guideline does not apply to new construction of boilers or pressure vessels performed under a Class MA contractor licence or by organizations holding an ASME Certificate of Authorization.' },
+  { q: 'Can brazing performed during procedure qualification also count for brazer performance qualification?', a: 'Yes, provided all relevant regulatory and code requirements under Section 3 of BRC-7035 and Article XIII of ASME Section IX are satisfied.' },
+  { q: 'What records must be available during a TSBC inspection?', a: 'QCP manual, BPS copies (registered), PQR records (QB-483), BPQ records for all brazers (QB-484), continuity records, and any BPS adoption agreements.' }
+];
+
+function buildFaqs() {
+  const container = document.getElementById('faq-list');
+  faqs.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'acc-item';
+    div.innerHTML = `<div class="acc-head" onclick="toggleAcc(${i})"><span>${f.q}</span><span class="acc-arrow" id="arr-${i}">▼</span></div><div class="acc-body" id="acc-${i}">${f.a}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleAcc(i) {
+  const body = document.getElementById('acc-' + i);
+  const arr = document.getElementById('arr-' + i);
+  const open = body.classList.toggle('open');
+  arr.classList.toggle('open', open);
+}
+
+buildChecks();
+buildFaqs();
+</script>
+</body>
+</html>
